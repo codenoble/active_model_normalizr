@@ -24,43 +24,40 @@ class ActiveModelSerializers::Adapter::Normalizr < ActiveModelSerializers::Adapt
     serializers = serializer.respond_to?(:each) ? serializer : Array(serializer)
 
     serializers.each do |ser|
-      key = ser.json_key.pluralize
-      h[key] ||= {}
-      h[key][ser.object.id] = ser.attributes.stringify_keys
+      # Main object(s) to be serialized
+      main_entity_name = ser.json_key.pluralize
+      main_entity_id = ser.object.id
 
+      h[main_entity_name] ||= {}
+      h[main_entity_name][main_entity_id] = ser.attributes.stringify_keys
+
+      # Associated objects
       ser.associations.each do |assoc|
-        h[assoc.name.to_s.pluralize] ||= {}
+        entity_name = assoc.name.to_s
+        entities_name = entity_name.pluralize
+        entity_object = ser.object.send(assoc.name)
+        assoc_ids =
+          if entity_object.nil?
+            nil
+          elsif entity_object.respond_to?(:each)
+            entity_object.map(&:id)
+          else
+            entity_object.id
+          end
 
-        Array(ser.object.send(assoc.name)).each do |assoc_entity|
+        # Ensure that objects contain ids of their associated models
+        h[main_entity_name][main_entity_id][entity_name] = assoc_ids
+        h[entities_name] ||= {}
+
+        Array(entity_object).each do |assoc_entity|
           # TODO: use serializer here if possible
-          h[assoc.name.to_s.pluralize][assoc_entity.id] = assoc_entity.attributes
+          h[entities_name][assoc_entity.id] = assoc_entity.attributes
         end
       end
     end
 
     h
   end
-
-  # def entity_array
-  #   array = []
-  #
-  #   if obj.respond_to? :to_a
-  #     array += obj.to_a
-  #   else
-  #     array << obj
-  #   end
-  #
-  #   binding.pry
-  #   serializer.associations.each do |association|
-  #
-  #   end
-  #
-  #   array
-  # end
-  #
-  # def entity_hash(model)
-  #   { model.id => model.attributes }
-  # end
 
   def object_key(object)
     if object.is_a? ActiveRecord::Relation

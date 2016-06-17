@@ -47,6 +47,8 @@ describe ActiveModelSerializers::Adapter::Normalizr do
         let!(:photo) { Photo.create! article: article, url: 'http://lorempixel.com/100/100/' }
 
         it 'serializes the associated model' do
+          expect(articles[article.id]).to have_key 'photo'
+          expect(articles[article.id]['photo']).to eql photo.id
           expect(entities).to have_key 'photos'
           expect(photos).to have_key photo.id
           expect(photos[photo.id]['url']).to eql 'http://lorempixel.com/100/100/'
@@ -58,6 +60,8 @@ describe ActiveModelSerializers::Adapter::Normalizr do
           let!(:comment) { Comment.create! article: article, comment: 'Meh' }
 
           it 'serializes the associated model' do
+            expect(articles[article.id]).to have_key 'comments'
+            expect(articles[article.id]['comments']).to eql [comment.id]
             expect(entities).to have_key 'comments'
             expect(comments).to have_key comment.id
             expect(comments[comment.id]['comment']).to eql 'Meh'
