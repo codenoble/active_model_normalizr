@@ -14,5 +14,10 @@ class CreateTestTables < ActiveRecord::Migration
       t.belongs_to :article
       t.string :username
     end
+
+    create_table :photos do |t|
+      t.belongs_to :article
+      t.string :url
+    end
   end
 end

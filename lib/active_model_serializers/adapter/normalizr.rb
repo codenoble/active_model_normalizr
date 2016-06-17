@@ -21,7 +21,6 @@ class ActiveModelSerializers::Adapter::Normalizr < ActiveModelSerializers::Adapt
   def entities(options = nil)
     h = {}
 
-    objects = obj.respond_to?(:each) ? obj : Array(obj)
     serializers = serializer.respond_to?(:each) ? serializer : Array(serializer)
 
     serializers.each do |ser|
@@ -32,7 +31,7 @@ class ActiveModelSerializers::Adapter::Normalizr < ActiveModelSerializers::Adapt
       ser.associations.each do |assoc|
         h[assoc.name.to_s.pluralize] ||= {}
 
-        ser.object.send(assoc.name).each do |assoc_entity|
+        Array(ser.object.send(assoc.name)).each do |assoc_entity|
           # TODO: use serializer here if possible
           h[assoc.name.to_s.pluralize][assoc_entity.id] = assoc_entity.attributes
         end

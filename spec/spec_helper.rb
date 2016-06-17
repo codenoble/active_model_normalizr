@@ -7,8 +7,11 @@ require 'pry'
 require 'active_model_serializers/adapter/normalizr'
 require './spec/db/migrate/create_test_tables'
 require './spec/active_model/serializers/article_serializer'
+require './spec/active_model/serializers/comment_serializer'
+require './spec/active_model/serializers/photo_serializer'
 require './spec/active_record/models/article'
 require './spec/active_record/models/comment'
+require './spec/active_record/models/photo'
 require './spec/active_record/models/like'
 
 ActiveRecord::Base.establish_connection(
