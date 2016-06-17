@@ -19,3 +19,8 @@ In a Rails initializer or somewhere similar:
 ```ruby
 ActiveModelSerializers.config.adapter = ActiveModelSerializers::Adapter::Normalizr
 ```
+
+Supported Dependency Versions
+=============================
+
+- `active_model_serializers ~> 0.10`
