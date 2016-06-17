@@ -41,6 +41,10 @@ describe ActiveModelSerializers::Adapter::Normalizr do
           expect(articles[article.id]['title']).to eql 'Dunno'
           expect(articles[article.id]['content']).to eql 'Lorem ipsum...'
         end
+
+        it 'includes custom attributes' do
+          expect(articles[article.id]['published']).to be true
+        end
       end
 
       context 'with a has_one association' do
@@ -66,12 +70,22 @@ describe ActiveModelSerializers::Adapter::Normalizr do
             expect(comments).to have_key comment.id
             expect(comments[comment.id]['comment']).to eql 'Meh'
           end
+
+          it 'includes custom attributes' do
+            expect(comments[comment.id]['spam']).to be false
+          end
+
+          it 'does not include' do
+            expect(comments[comment.id]).to_not have_key 'posted_at'
+          end
         end
 
         context 'when the association has no serializer' do
           let!(:like) { Like.create! article: article, username: 'milton' }
 
           it 'serializes the associated model' do
+            expect(articles[article.id]).to have_key 'likes'
+            expect(articles[article.id]['likes']).to eql [like.id]
             expect(entities).to have_key 'likes'
             expect(likes).to have_key like.id
             expect(likes[like.id]['username']).to eql 'milton'

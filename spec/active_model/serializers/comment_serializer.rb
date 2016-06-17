@@ -1,4 +1,8 @@
 class CommentSerializer < ActiveModel::Serializer
-  attributes :comment
+  attributes :comment, :spam
   belongs_to :article
+
+  def spam
+    false
+  end
 end

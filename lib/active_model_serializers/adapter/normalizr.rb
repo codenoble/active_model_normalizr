@@ -49,9 +49,14 @@ class ActiveModelSerializers::Adapter::Normalizr < ActiveModelSerializers::Adapt
         h[main_entity_name][main_entity_id][entity_name] = assoc_ids
         h[entities_name] ||= {}
 
-        Array(entity_object).each do |assoc_entity|
-          # TODO: use serializer here if possible
-          h[entities_name][assoc_entity.id] = assoc_entity.attributes
+        if assoc.serializer.nil?
+          Array(assoc.options[:virtual_value]).each do |v_value|
+            h[entities_name][v_value['id']] = v_value.stringify_keys
+          end
+        else
+          Array(assoc.serializer).try(:each) do |assoc_ser|
+            h[entities_name][assoc_ser.object.id] = assoc_ser.as_json.stringify_keys
+          end
         end
       end
     end

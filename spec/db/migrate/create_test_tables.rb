@@ -8,6 +8,7 @@ class CreateTestTables < ActiveRecord::Migration
     create_table :comments do |t|
       t.belongs_to :article
       t.string :comment
+      t.datetime :posted_at
     end
 
     create_table :likes do |t|
