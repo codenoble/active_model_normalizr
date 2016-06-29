@@ -45,6 +45,10 @@ describe ActiveModelSerializers::Adapter::Normalizr do
         it 'includes custom attributes' do
           expect(articles[article.id]['published']).to be true
         end
+
+        it 'transforms key' do
+          expect(articles[article.id]).to have_key 'createdAt'
+        end
       end
 
       context 'with a has_one association' do
