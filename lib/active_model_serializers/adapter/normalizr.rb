@@ -1,11 +1,17 @@
 class ActiveModelSerializers::Adapter::Normalizr < ActiveModelSerializers::Adapter::Base
+  def self.default_key_transform
+    :camel_lower
+  end
+
   def serializable_hash(options = nil)
     options = serialization_options(options)
 
-    {
+    serialized_hash = {
       'result' => result,
       'entities' => entities(options)
     }
+
+    self.class.transform_key_casing!(serialized_hash, options)
   end
 
   private
